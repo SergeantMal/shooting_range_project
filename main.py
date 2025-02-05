@@ -19,6 +19,9 @@ target_img = pygame.image.load('img/target.png')
 game_icon = pygame.image.load('img/shooting-range.png')
 gun_cursor = pygame.image.load('img/gun.png')  # Картинка пистолета (курсор)
 
+# Загрузка звука выстрела
+shot_sound = pygame.mixer.Sound('img/shoot.wav')  # Замените на путь к вашему звуковому файлу
+
 # Размер курсора (например, 90x90 пикселей)
 CURSOR_WIDTH = 90
 CURSOR_HEIGHT = 83
@@ -97,12 +100,12 @@ while running:
                 center_x = target_x + 100 // 2
                 center_y = target_y + 100 // 2
 
-                # Для отладки выводим координаты центра мишени и дула пистолета
-                print(f"Центр мишени: ({center_x}, {center_y})")
-                print(f"Координаты дула курсора: ({aim_x}, {aim_y})")
 
                 points = calculate_score(aim_x, aim_y, center_x, center_y)  # Подсчет очков
                 print(f"Вы набрали: {points} очков! Общий счет: {score}")
+
+                # Воспроизводим звук выстрела
+                shot_sound.play()
 
                 # Если попадание засчитано (очки больше 0), обновляем позицию мишени
                 if points > 0:
