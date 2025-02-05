@@ -22,6 +22,11 @@ gun_cursor = pygame.image.load('img/gun.png')  # Картинка пистоле
 # Загрузка звука выстрела
 shot_sound = pygame.mixer.Sound('img/shoot.wav')  # Замените на путь к вашему звуковому файлу
 
+# Загрузка и воспроизведение фоновой музыки
+pygame.mixer.music.load('img/background_music.mp3')  # Замените на путь к вашему mp3-файлу
+pygame.mixer.music.set_volume(0.5)  # Уровень громкости (0.0 - 1.0)
+pygame.mixer.music.play(-1)  # Бесконечное повторение музыки
+
 # Размер курсора (например, 90x90 пикселей)
 CURSOR_WIDTH = 90
 CURSOR_HEIGHT = 83
@@ -130,7 +135,7 @@ while running:
         if pygame.time.get_ticks() > next_target_update:
             target_x, target_y = random.choice(right_zone_positions)
             next_target_update = pygame.time.get_ticks() + random.randint(1000,
-                                                                          3000)  # Устанавливаем новый случайный интервал от 1 до 3 секунд
+                                                                          5000)  # Устанавливаем новый случайный интервал от 1 до 3 секунд
 
         # Проверка нажатия на кнопку выхода
         if event.type == pygame.MOUSEBUTTONDOWN:
