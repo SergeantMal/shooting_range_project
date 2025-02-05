@@ -117,7 +117,7 @@ while running:
             if event.button == 1:  # Левая кнопка мыши
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 aim_x = mouse_x
-                aim_y = mouse_y - GUN_BARREL_OFFSET_Y
+                aim_y = mouse_y - GUN_BARREL_OFFSET_Y - 10
 
                 center_x = target_x + 100 // 2
                 center_y = target_y + 100 // 2
@@ -162,8 +162,6 @@ while running:
     # Получаем координаты мыши
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
-    # Отображаем кастомный курсор
-    #screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
 
     # Отображение счета на экране
     score_text = score_font.render(f"Счет: {score}", True, (255, 0, 0))  # Белый цвет
