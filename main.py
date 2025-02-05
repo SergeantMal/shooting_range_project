@@ -59,7 +59,9 @@ target_x, target_y = random.choice(right_zone_positions)
 
 # Очки игрока
 score = 0
-font = pygame.font.Font(None, 36)  # Шрифт для отображения счета
+
+# Шрифт для отображения счета
+score_font = pygame.font.SysFont('Arial', 48, bold=True)
 
 # Координаты дула пистолета (смещение относительно верхней середины курсора)
 GUN_BARREL_OFFSET_X = 47
@@ -122,6 +124,19 @@ while running:
 
     # Отображаем кастомный курсор
     screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
+
+    # Отображение счета на экране
+    score_text = score_font.render(f"Счет: {score}", True, (255, 255, 255))  # Белый цвет
+    shadow_text = score_font.render(f"Счет: {score}", True, (0, 0, 0))  # Черная тень
+
+    # Центрируем текст сверху
+    text_x = SCREEN_WIDTH // 2 - score_text.get_width() // 2
+    text_y = 20  # Отступ сверху
+
+    # Отрисовка тени для лучшей читаемости
+    screen.blit(shadow_text, (text_x + 2, text_y + 2))
+    screen.blit(score_text, (text_x, text_y))
+
 
     # Обновление экрана
     pygame.display.flip()
