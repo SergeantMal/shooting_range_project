@@ -67,6 +67,9 @@ score_font = pygame.font.SysFont('Arial', 48, bold=True)
 GUN_BARREL_OFFSET_X = 47
 GUN_BARREL_OFFSET_Y = 17
 
+# Время до следующего обновления мишени
+next_target_update = pygame.time.get_ticks() + random.randint(1000, 3000)  # Следующее обновление через 1-3 секунды
+
 # Функция расчета очков в зависимости от попадания
 def calculate_score(aim_x, aim_y, center_x, center_y):
     global score
@@ -112,6 +115,12 @@ while running:
                 # Если попадание засчитано (очки больше 0), обновляем позицию мишени
                 if points > 0:
                     target_x, target_y = random.choice(right_zone_positions)
+
+        # Проверка, нужно ли обновить мишень
+        if pygame.time.get_ticks() > next_target_update:
+            target_x, target_y = random.choice(right_zone_positions)
+            next_target_update = pygame.time.get_ticks() + random.randint(1000,
+                                                                          3000)  # Устанавливаем новый случайный интервал от 1 до 3 секунд
 
     # Отрисовка фона
     screen.blit(background, (0, 0))
