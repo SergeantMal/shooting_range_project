@@ -11,13 +11,17 @@ SCREEN_HEIGHT = 600
 
 # Создание окна
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Игра Тир")
+pygame.display.set_caption('Игра "Тир"')
 
 # Загрузка изображений
 background = pygame.image.load('img/shooting_range_background.png')
 target_img = pygame.image.load('img/target.png')
 game_icon = pygame.image.load('img/shooting-range.png')
 gun_cursor = pygame.image.load('img/gun.png')  # Картинка пистолета (курсор)
+bullet_hole_img = pygame.image.load('img/hole.png')  # Загружаем отверстие от пули
+
+# Масштабируем изображение пули (если нужно)
+bullet_hole_img = pygame.transform.scale(bullet_hole_img, (40, 40))
 
 # Загрузка звука выстрела
 shot_sound = pygame.mixer.Sound('img/shoot.wav')  # Замените на путь к вашему звуковому файлу
@@ -89,6 +93,10 @@ exit_button_img = pygame.transform.scale(exit_button_img, (exit_button_width, ex
 
 floating_texts = []
 
+# Список для хранения отверстий от пуль
+
+bullet_holes = []  # (x, y, время появления)
+
 # Функция расчета очков в зависимости от попадания
 def calculate_score(aim_x, aim_y, center_x, center_y):
     global score
@@ -113,7 +121,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         # Обработка клика мыши
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if event.button == 1:  # Левая кнопка мыши
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 aim_x = mouse_x
@@ -123,6 +131,10 @@ while running:
                 center_y = target_y + 100 // 2
 
                 points = calculate_score(aim_x, aim_y, center_x, center_y)
+
+                # Добавляем координаты попадания в список bullet_holes
+                bullet_holes.append((aim_x - 10, aim_y - 10, pygame.time.get_ticks()))
+
 
                 # Определяем текст сообщения
                 if points == 0:
@@ -209,7 +221,14 @@ while running:
         screen.blit(text_shadow, ((SCREEN_WIDTH // 2 - text_surface.get_width() // 2) + 2, y - 180 + 2))
         screen.blit(text_surface, (SCREEN_WIDTH // 2 - text_surface.get_width() // 2, y-180))
 
-
+    # Отображение отверстий от пуль
+    current_time = pygame.time.get_ticks()
+    for hole in bullet_holes[:]:
+        x, y, time = hole
+        if current_time - time > 1500:  # Метка исчезает через 1.5 сек
+            bullet_holes.remove(hole)
+        else:
+            screen.blit(bullet_hole_img, (x, y))  # Отображаем отверстие от пули
     # Обновление экрана
     pygame.display.flip()
 
