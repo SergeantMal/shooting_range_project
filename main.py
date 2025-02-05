@@ -85,6 +85,10 @@ exit_button_y = SCREEN_HEIGHT - exit_button_height - 10
 exit_button_img = pygame.image.load('img/exit_button.png')  # Замените на путь к вашей картинке кнопки
 exit_button_img = pygame.transform.scale(exit_button_img, (exit_button_width, exit_button_height))  # Масштабируем до 200x200
 
+# Список для хранения текстов на экране
+
+floating_texts = []
+
 # Функция расчета очков в зависимости от попадания
 def calculate_score(aim_x, aim_y, center_x, center_y):
     global score
@@ -112,22 +116,27 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Левая кнопка мыши
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                # Определяем координаты дула пистолета (верхняя середина курсора)
                 aim_x = mouse_x
                 aim_y = mouse_y - GUN_BARREL_OFFSET_Y
 
-                # Координаты центра мишени
                 center_x = target_x + 100 // 2
                 center_y = target_y + 100 // 2
 
+                points = calculate_score(aim_x, aim_y, center_x, center_y)
 
-                points = calculate_score(aim_x, aim_y, center_x, center_y)  # Подсчет очков
-                print(f"Вы набрали: {points} очков! Общий счет: {score}")
+                # Определяем текст сообщения
+                if points == 0:
+                    text = "Мимо!"
+                elif points == 10:
+                    text = "10 очков. В яблочко!"
+                else:
+                    text = f"{points} очков"
 
-                # Воспроизводим звук выстрела
+                # Добавляем сообщение (текст, координаты, время появления, прозрачность)
+                floating_texts.append([text, target_x + 50, target_y + 110, pygame.time.get_ticks(), 255])
+
                 shot_sound.play()
 
-                # Если попадание засчитано (очки больше 0), обновляем позицию мишени
                 if points > 0:
                     target_x, target_y = random.choice(right_zone_positions)
 
@@ -157,7 +166,7 @@ while running:
     #screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
 
     # Отображение счета на экране
-    score_text = score_font.render(f"Счет: {score}", True, (255, 255, 255))  # Белый цвет
+    score_text = score_font.render(f"Счет: {score}", True, (255, 0, 0))  # Белый цвет
     shadow_text = score_font.render(f"Счет: {score}", True, (0, 0, 0))  # Черная тень
 
     # Центрируем текст сверху
@@ -181,6 +190,27 @@ while running:
 
     # Отображаем картинку кнопки выхода
     screen.blit(exit_button_img, (exit_button_x, exit_button_y))
+
+    # Отображаем текст на экране
+
+    current_time = pygame.time.get_ticks()
+    for text_data in floating_texts[:]:
+        text, x, y, start_time, alpha = text_data
+        elapsed_time = current_time - start_time
+
+        if elapsed_time > 1000:  # Через 1.5 сек удаляем текст
+            floating_texts.remove(text_data)
+            continue
+
+        alpha = max(0, 255 - (elapsed_time // 6))  # Затухание
+        text_surface = score_font.render(text, True, (255, 0, 0))
+        text_shadow = score_font.render(text, True, (0, 0, 0))  # Черная тень
+        text_surface.set_alpha(alpha)
+        text_shadow.set_alpha(alpha)
+
+        screen.blit(text_shadow, ((SCREEN_WIDTH // 2 - text_surface.get_width() // 2) + 2, y - 180 + 2))
+        screen.blit(text_surface, (SCREEN_WIDTH // 2 - text_surface.get_width() // 2, y-180))
+
 
     # Обновление экрана
     pygame.display.flip()
