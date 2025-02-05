@@ -140,7 +140,7 @@ while running:
                 points = calculate_score(aim_x, aim_y, center_x, center_y)
 
                 # Вспышка выстрела
-                flash_x, flash_y = aim_x-65, aim_y-130
+                flash_x, flash_y = aim_x-90, aim_y-60
                 flash_visible = True
                 flash_time = current_time + 100  # Вспышка исчезнет через 100 мс
 
