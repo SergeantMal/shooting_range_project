@@ -70,6 +70,16 @@ GUN_BARREL_OFFSET_Y = 17
 # Время до следующего обновления мишени
 next_target_update = pygame.time.get_ticks() + random.randint(1000, 3000)  # Следующее обновление через 1-3 секунды
 
+# Позиция кнопки выхода
+exit_button_width = 100
+exit_button_height = 100
+exit_button_x = 10
+exit_button_y = SCREEN_HEIGHT - exit_button_height - 10
+
+# Загрузка изображения кнопки выхода
+exit_button_img = pygame.image.load('img/exit_button.png')  # Замените на путь к вашей картинке кнопки
+exit_button_img = pygame.transform.scale(exit_button_img, (exit_button_width, exit_button_height))  # Масштабируем до 200x200
+
 # Функция расчета очков в зависимости от попадания
 def calculate_score(aim_x, aim_y, center_x, center_y):
     global score
@@ -122,6 +132,13 @@ while running:
             next_target_update = pygame.time.get_ticks() + random.randint(1000,
                                                                           3000)  # Устанавливаем новый случайный интервал от 1 до 3 секунд
 
+        # Проверка нажатия на кнопку выхода
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            if (exit_button_x <= mouse_x <= exit_button_x + exit_button_width and
+                    exit_button_y <= mouse_y <= exit_button_y + exit_button_height):
+                running = False
+
     # Отрисовка фона
     screen.blit(background, (0, 0))
 
@@ -132,7 +149,7 @@ while running:
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
     # Отображаем кастомный курсор
-    screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
+    #screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
 
     # Отображение счета на экране
     score_text = score_font.render(f"Счет: {score}", True, (255, 255, 255))  # Белый цвет
@@ -146,6 +163,19 @@ while running:
     screen.blit(shadow_text, (text_x + 2, text_y + 2))
     screen.blit(score_text, (text_x, text_y))
 
+    # Проверка, если курсор находится над кнопкой выхода
+    if (exit_button_x <= mouse_x <= exit_button_x + exit_button_width and
+            exit_button_y <= mouse_y <= exit_button_y + exit_button_height):
+        pygame.mouse.set_visible(True)  # Стандартный курсор при наведении
+    else:
+        pygame.mouse.set_visible(False)  # Кастомный курсор
+
+    # Отображаем кастомный курсор, если он не скрыт
+    if pygame.mouse.get_visible() == False:
+        screen.blit(gun_cursor, (mouse_x - CURSOR_WIDTH // 2, mouse_y - CURSOR_HEIGHT // 2))
+
+    # Отображаем картинку кнопки выхода
+    screen.blit(exit_button_img, (exit_button_x, exit_button_y))
 
     # Обновление экрана
     pygame.display.flip()
