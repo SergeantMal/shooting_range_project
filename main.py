@@ -19,9 +19,11 @@ target_img = pygame.image.load('img/target.png')
 game_icon = pygame.image.load('img/shooting-range.png')
 gun_cursor = pygame.image.load('img/gun.png')  # Картинка пистолета (курсор)
 bullet_hole_img = pygame.image.load('img/hole.png')  # Загружаем отверстие от пули
+muzzle_flash_img = pygame.image.load('img/flash.png')  # Вспышка выстрела
 
-# Масштабируем изображение пули (если нужно)
+# Масштабируем изображения
 bullet_hole_img = pygame.transform.scale(bullet_hole_img, (40, 40))
+muzzle_flash_img = pygame.transform.scale(muzzle_flash_img, (200, 112))  # Размер вспышки
 
 # Загрузка звука выстрела
 shot_sound = pygame.mixer.Sound('img/shoot.wav')  # Замените на путь к вашему звуковому файлу
@@ -53,6 +55,11 @@ right_zone_positions = [
     (445, 215),
     (525, 215)
 ]
+
+# Вспышка выстрела
+flash_visible = False
+flash_time = 0
+flash_x, flash_y = 0, 0
 
 # Ограничение максимального размера мишени
 MAX_TARGET_SIZE = 100  # Максимальный размер мишени по ширине/высоте
@@ -132,6 +139,11 @@ while running:
 
                 points = calculate_score(aim_x, aim_y, center_x, center_y)
 
+                # Вспышка выстрела
+                flash_x, flash_y = aim_x-65, aim_y-130
+                flash_visible = True
+                flash_time = current_time + 100  # Вспышка исчезнет через 100 мс
+
                 # Добавляем координаты попадания в список bullet_holes
                 bullet_holes.append((aim_x - 10, aim_y - 10, pygame.time.get_ticks()))
 
@@ -170,6 +182,12 @@ while running:
 
     # Отрисовка мишени
     screen.blit(target_img, (target_x, target_y))
+
+    # Отображение вспышки
+    if flash_visible and current_time < flash_time:
+        screen.blit(muzzle_flash_img, (flash_x, flash_y))
+    else:
+        flash_visible = False
 
     # Получаем координаты мыши
     mouse_x, mouse_y = pygame.mouse.get_pos()
